@@ -1,0 +1,97 @@
+org: davidoliveira21
+app: apiaws
+service: aws-employer-api
+variablesResolutionMode: 20210326
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-webpack
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+  serverless-offline:
+    httpPort: 3003
+  dynamodb:
+    start:
+      port: 5000
+      inMemory: true
+      migrate: true
+    stages:
+      - dev
+
+provider:
+  lambdaHashingVersion: 20201221
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    EMPLOYERS_TABLE: employerNewChallenge-dev
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-east-1:*:table/employerNewChallenge-dev"
+
+functions:
+  createEmployer:
+    handler: src/functions/createEmployer.handler
+    events:
+      - http:
+          method: post
+          path: create-employer
+          cors: true
+  getAllEmployer:
+    handler: src/functions/getAllEmployer.handler
+    events:
+      - http:
+          method: get
+          path: get-employer
+          cors: true
+  getEmployer:
+    handler: src/functions/getEmployer.handler
+    events:
+      - http:
+          method: get
+          path: get-employer/{employerId}
+          cors: true
+  updateEmployer:
+    handler: src/functions/updateEmployer.handler
+    events:
+      - http:
+          method: put
+          path: update-employer/{employerId}
+          cors: true
+  deleteEmployer:
+    handler: src/functions/deleteEmployer.handler
+    events:
+      - http:
+          method: delete
+          path: delete-employer/{employerId}
+          cors: true
+
+resources:
+  Resources:
+    EmployersListTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: employerNewChallenge-dev
+        AttributeDefinitions:
+          - AttributeName: employerId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: employerId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
