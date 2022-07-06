@@ -1,8 +1,8 @@
 interface EmployerPost {
   body: {
     name: string;
+    age: string;
     occupation: string;
-    age: number;
   };
 }
 

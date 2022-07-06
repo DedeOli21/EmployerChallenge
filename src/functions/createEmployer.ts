@@ -16,7 +16,9 @@ export const handler: Handler = middify(
     context: Context
   ): Promise<APIGatewayProxyResult> => {
     const { age, name, occupation } = event.body;
-
+    
+    if (!name || !age || !occupation) return formatJSONResponse(400, "Missing required fields");
+    
     try {
       const employerId: string = uuid.v4();
       const employer = await employerService.createEmployer({

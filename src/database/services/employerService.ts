@@ -1,5 +1,5 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
-import Employer from "../../models/Employer";
+import { Employer } from "../../models/Employer";
 
 class EmployerService {
   constructor(

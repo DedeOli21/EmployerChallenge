@@ -12,6 +12,7 @@
     "@middy/http-cors": "^2.2.0",
     "@middy/http-json-body-parser": "^2.2.0",
     "aws-lambda": "^0.1.2",
+    "dynamoose": "^2.8.5",
     "node": "^14.2.1",
     "uuid": "^3.3.2"
   },
